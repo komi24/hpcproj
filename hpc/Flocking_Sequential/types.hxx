@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <vector>
+//#include "agent.hxx"
 
 // Forward declaration
 class Agent;

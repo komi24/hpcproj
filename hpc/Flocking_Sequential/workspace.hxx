@@ -3,14 +3,16 @@
 #ifndef  WORKSPACE
 #define  WORKSPACE
 
-#include "parser.hxx"
 #include "types.hxx"
-#include "octree.hxx"
+#include "parser.hxx"
+//#include "octree.hxx"
 
+class Octree;
 
 class Workspace
 {
 protected:
+//public:
   Container agents;
   /* Spatial data structure for agent search */
   Octree oc;
@@ -26,14 +28,22 @@ protected:
   Real tUpload, tDownload, tCohesion, tAlignment, tSeparation;
 
   Real domainsize;
-  void init();
+  
 public:
+  Workspace(){};
   Workspace(ArgumentParser &parser);
 
   Workspace(size_t nAgents,
   Real wc, Real wa, Real ws,
   Real rc, Real ra, Real rs);
 
+  void init();
+
+  /* Update : move agent that needed
+  to be moved */
+  void update();
+
+  
   void move();
   void simulate(int nsteps);
   void save(int stepid);

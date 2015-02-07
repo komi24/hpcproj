@@ -1,4 +1,9 @@
 #include "agent.hxx"
+#include "octree.hxx"
+
+
+int Agent::curr_state =0;
+
 
 Agent::Agent(const Vector &pos, const Vector &vel, const Vector &dir){
 //TODO Use of position/velocity/direction lists ? + Parallelisr les opérations
@@ -13,10 +18,10 @@ Vector Agent::separation(TemporaryContainer &agent_list, size_t index, double ra
   Vector force = Zeros();
   int count = 0;
   for(size_t i = 0; i < agent_list.size(); i++) {
-    double dist = (this->position[this->curr_state] - agent_list[i].position[this->curr_state]).norm();
+    double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     if (i != index && dist < rad) {
       /* TODO the comparison is no longer needed */
-      force -= (this->position[this->curr_state] - agent_list[i].position[this->curr_state]).normalized();
+      force -= (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).normalized();
       ++count;
     }
   }
@@ -28,10 +33,10 @@ Vector Agent::cohesion(TemporaryContainer &agent_list, size_t index, double rad)
 
   int count = 0;
   for(size_t i = 0; i < agent_list.size(); i++) {
-    double dist = (this->position[this->curr_state] - agent_list[i].position[this->curr_state]).norm();
+    double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     if (i != index && dist < rad){
       /* TODO the comparison is no longer needed */
-      force += agent_list[i].position[this->curr_state];
+      force += agent_list[i]->position[this->curr_state];
       ++count;
     }
   }
@@ -43,10 +48,10 @@ Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad)
 
   int count = 0;
   for(size_t i = 0; i < agent_list.size(); i++) {
-    double dist = (this->position[this->curr_state] - agent_list[i].position[this->curr_state]).norm();
+    double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     if (i != index && dist < rad) {
       /* TODO the comparison is no longer needed */
-      force += agent_list[i].velocity[this->curr_state];
+      force += agent_list[i]->velocity[this->curr_state];
       ++count;
     }
   }

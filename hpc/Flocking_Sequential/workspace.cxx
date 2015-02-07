@@ -6,6 +6,8 @@
 #include "agent.hxx"
 #include "vector.hxx"
 #include "workspace.hxx"
+#include "octree.hxx"
+
 
 Workspace::Workspace(ArgumentParser &parser)
 {
@@ -21,7 +23,7 @@ Workspace::Workspace(ArgumentParser &parser)
   rSeparation = parser("rs").asDouble();
   dt= 0.05;
   maxU = 2.0;
-  time = 0.,
+  time = 0.,//;
 
   this->init();}
 
@@ -40,6 +42,12 @@ void  Workspace::init(){
     // Random generator seed
     srand48(std::time(0));
 
+    //Initializing Octree head
+    Real maxR;
+    maxR = (rCohesion > rSeparation) ? rCohesion : rSeparation;
+    maxR = (maxR > rAlignment) ? maxR : rAlignment;
+    oc = *(new Octree(2*maxR,domainsize));
+
     // Initialize agents
     // This loop may be quite expensive due to random number generation
     for(size_t j = 0; j < na; j++){
@@ -48,6 +56,7 @@ void  Workspace::init(){
 
       // Create random velocity
       agents.push_back(Agent(position, Zeros(), Zeros()));
+      oc.add(agents.back());
     }
 
     /* TODO build the octree */
@@ -75,13 +84,14 @@ void Workspace::move()
     }
 
     // Integration in time using euler method
+    //TODO Remark for report : parallelism gain thx to curr_state
     Agent.curr_state = 1 - Agent.curr_state;
     for(size_t k = 0; k< na; k++){
-      agents[k].velocity[curr_state] = agents[k].velocity[1-curr_state] + agents[k].direction;
+      agents[k].velocity[Agent.curr_state] = agents[k].velocity[1-Agent.curr_state] + agents[k].direction;
 
       double speed = agents[k].velocity.norm();
       if (speed > maxU) {
-        agents[k].velocity[curr_state] = agents[k].velocity[1-curr_state] * maxU/speed;
+        agents[k].velocity[Agent.curr_state] = agents[k].velocity[1-Agent.curr_state] * maxU/speed;
       }
       agents[k].position[Agent.curr_state] = agents[k].position[1-Agent.curr_state] + dt*agents[k].velocity[1-Agent.curr_state];
 
@@ -90,7 +100,24 @@ void Workspace::move()
       agents[k].position[Agent.curr_state].z= fmod(agents[k].position[Agent.curr_state].z,domainsize);
 
     }
+    update();
 }
+
+
+void Workspace::update(){
+  for(size_t k = 0; k< na; k++){
+    Octree *lf = agents[k].leaf[1-curr_state];
+    //Retirer de la liste si nécessaire et rajouter au bon endroit
+    if((lf->position > agents[k].position[1-curr_state]) 
+      || (agents[k].position[1-curr_state] > (lf->postion + width) {
+        lf.agents.erase(std::find(lf.agents.begin(),
+          lf.agents.end(),
+          agents[k]));
+        lf->delete_leaves();
+        oc.add(agents[k]);
+      }
+}
+
 
 void Workspace::simulate(int nsteps) {
   // store initial position[Agent.curr_state]s

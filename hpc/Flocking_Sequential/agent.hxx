@@ -11,6 +11,8 @@ typedef enum {
   wall
 } AgentType;
 
+class Octree;
+
 class Agent{
   public :
     /* Current position and next position according to pos_state in octree*/
@@ -23,7 +25,7 @@ class Agent{
     Octree* leaf[2];
     /* Indicate if the current position of an agent is from postion 
     or position2 */
-    static int curr_state = 0;
+    static int curr_state;
 
 
     Agent(const Vector &pos, const Vector &vel, const Vector &dir);

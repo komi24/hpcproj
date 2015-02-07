@@ -80,6 +80,10 @@ class Vector
       return !operator==( rhs );
     }
 
+    bool operator>( const Vector& rhs ) const {
+      return (x > rhs.x) && (y > rhs.y) && (z > rhs.z);
+    }
+
     Real norm() {
       return sqrt(x * x + y * y + z * z);
     }
