@@ -4,12 +4,16 @@
 //#include "types.hxx"
 #include "workspace.hxx"
 #include "parser.hxx"
+#include "tester.hxx"
 //#include "agent.hxx"
 
 // Main class for running the parallel flocking sim
 int main(int argc, char **argv) {
   // Create parser
-  ArgumentParser parser;
+  Tester t;
+  t.testConstruction();
+  
+  /*ArgumentParser parser;
 
   // Add options to parser
   parser.addOption("agents", 640);
@@ -28,9 +32,10 @@ int main(int argc, char **argv) {
   // Create workspace
   Workspace workspace(parser);
 
+
   // Launch simulation
   int nSteps = parser("steps").asInt();
-  workspace.simulate(nSteps);
+  workspace.simulate(nSteps);*/
 
   return 0;
 }
