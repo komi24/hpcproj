@@ -1,15 +1,16 @@
-#ifndef PARSER
-#define PARSER
+#ifndef OCTREE
+#define OCTREE
 
 #include <vector>
 #include "vector.hxx"
 #include "types.hxx"
-
-class Agent;
+#include "agent.hxx"
+//class Agent;
 
 class Octree {
 
-private:
+public:	
+//private:
 	/* Ordre spatial à respecter x,y,z croissant successif */
 	Octree *child[8];
 	Octree *parent;
@@ -18,10 +19,10 @@ private:
 	int index; // index position in its parent node
 
 
-public:	
 	TemporaryContainer agents; // we may use a different data structure than for neighbours
 	static Real widthmin;
 	
+	Octree(){Octree(0,0);};
 	Octree(Real wmin, Real width);
 	Octree(Real width, Octree *parent, Vector &position, int index);
 	/* Add an agent to its corresponding leaf 

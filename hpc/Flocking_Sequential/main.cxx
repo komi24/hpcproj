@@ -2,9 +2,8 @@
 // Agent (particle model)
 
 //#include "types.hxx"
-#include "parser.hxx"
-
 #include "workspace.hxx"
+#include "parser.hxx"
 //#include "agent.hxx"
 
 // Main class for running the parallel flocking sim

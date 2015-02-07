@@ -58,7 +58,7 @@ Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad)
   return ( count>0 ? force/count : force);
 }
 
-size_t Agent::find_closest(Container &agent_list, size_t index) {
+/*size_t Agent::find_closest(Container &agent_list, size_t index) {
   size_t closest_agent = index;
   double min_dist = 1000;
 
@@ -75,4 +75,4 @@ size_t Agent::find_closest(Container &agent_list, size_t index) {
     }
   }
   return closest_agent;
-}
+}*/

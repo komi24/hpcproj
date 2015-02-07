@@ -3,11 +3,11 @@
 #ifndef  WORKSPACE
 #define  WORKSPACE
 
-#include "types.hxx"
+#include "octree.hxx"
 #include "parser.hxx"
-//#include "octree.hxx"
+#include "types.hxx"
 
-class Octree;
+//class Octree;
 
 class Workspace
 {
@@ -30,7 +30,7 @@ protected:
   Real domainsize;
   
 public:
-  Workspace(){};
+  //Workspace(){};
   Workspace(ArgumentParser &parser);
 
   Workspace(size_t nAgents,

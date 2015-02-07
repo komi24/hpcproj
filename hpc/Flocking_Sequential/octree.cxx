@@ -4,6 +4,7 @@
 #include "octree.hxx"
 #include "agent.hxx"
 
+Real Octree::widthmin;
 
 Octree::Octree(Real width, 
 	Octree *parent, 

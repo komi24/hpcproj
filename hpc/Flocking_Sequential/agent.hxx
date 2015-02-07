@@ -1,6 +1,8 @@
 #ifndef AGENT_HXX
 #define AGENT_HXX
 
+#include <deque>
+#include <vector>
 #include "types.hxx"
 #include "vector.hxx"
 
@@ -12,6 +14,10 @@ typedef enum {
 } AgentType;
 
 class Octree;
+
+class Agent;
+
+typedef std::vector<Agent*> TemporaryContainer;
 
 class Agent{
   public :
@@ -33,7 +39,18 @@ class Agent{
     Vector separation(TemporaryContainer &agent_list, size_t index, double dist);
     Vector cohesion(TemporaryContainer &agent_list, size_t index, double dist);
     Vector alignment(TemporaryContainer &agent_list, size_t index, double dist);
-    size_t find_closest(Container &agent_list, size_t index);
+    //size_t find_closest(Container &agent_list, size_t index);
+
+/*    bool operator==( const Vector& rhs ) const {
+      return true;
+    }
+
+    bool operator!=( const Vector& rhs ) const {
+      return !operator==( rhs );
+    }*/
 };
+
+typedef std::deque<Agent> Container;
+
 
 #endif

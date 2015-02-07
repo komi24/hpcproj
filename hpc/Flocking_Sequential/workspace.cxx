@@ -3,10 +3,10 @@
 #include <fstream>
 #include <ctime>
 
+#include "workspace.hxx"
 #include "agent.hxx"
 #include "vector.hxx"
-#include "workspace.hxx"
-#include "octree.hxx"
+//#include "octree.hxx"
 
 
 Workspace::Workspace(ArgumentParser &parser)
@@ -66,38 +66,39 @@ void  Workspace::init(){
 void Workspace::move()
 {
     Vector s,c,a;
+    TemporaryContainer bufS,bufC,bufA;
 
     for(size_t k = 0; k< na; k++){
       //TODO "agents" argument should be only those which are close enough
       //it will then depends on k and on the radius needed.
       oc.returnNeighbours(agents[k],
-        rSeparation, TemporaryContainer &a,
-        rCohesion, TemporaryContainer &b,
-        rAlignment, TemporaryContainer &c);
+        rSeparation, bufS,
+        rCohesion, bufC,
+        rAlignment, bufA);
 
       /* TODO no longer need of k */
-      s = agents[k].separation(agents, k, rSeparation);
-      c = agents[k].cohesion(agents, k, rCohesion);
-      a = agents[k].alignment(agents, k, rAlignment);
+      s = agents[k].separation(bufS, k, rSeparation);
+      c = agents[k].cohesion(bufC, k, rCohesion);
+      a = agents[k].alignment(bufA, k, rAlignment);
 
-      agents[k].direction = wCohesion*c + wAlignment*a + wSeparation*s;
+      agents[k].direction[1-Agent::curr_state] = wCohesion*c + wAlignment*a + wSeparation*s;
     }
 
     // Integration in time using euler method
     //TODO Remark for report : parallelism gain thx to curr_state
-    Agent.curr_state = 1 - Agent.curr_state;
+    Agent::curr_state = 1 - Agent::curr_state;
     for(size_t k = 0; k< na; k++){
-      agents[k].velocity[Agent.curr_state] = agents[k].velocity[1-Agent.curr_state] + agents[k].direction;
+      agents[k].velocity[Agent::curr_state] = agents[k].velocity[1-Agent::curr_state] + agents[k].direction[1-Agent::curr_state];
 
-      double speed = agents[k].velocity.norm();
+      double speed = agents[k].velocity[1-Agent::curr_state].norm();
       if (speed > maxU) {
-        agents[k].velocity[Agent.curr_state] = agents[k].velocity[1-Agent.curr_state] * maxU/speed;
+        agents[k].velocity[Agent::curr_state] = agents[k].velocity[1-Agent::curr_state] * maxU/speed;
       }
-      agents[k].position[Agent.curr_state] = agents[k].position[1-Agent.curr_state] + dt*agents[k].velocity[1-Agent.curr_state];
+      agents[k].position[Agent::curr_state] = agents[k].position[1-Agent::curr_state] + dt*agents[k].velocity[1-Agent::curr_state];
 
-      agents[k].position[Agent.curr_state].x= fmod(agents[k].position[Agent.curr_state].x,domainsize);
-      agents[k].position[Agent.curr_state].y= fmod(agents[k].position[Agent.curr_state].y,domainsize);
-      agents[k].position[Agent.curr_state].z= fmod(agents[k].position[Agent.curr_state].z,domainsize);
+      agents[k].position[Agent::curr_state].x= fmod(agents[k].position[Agent::curr_state].x,domainsize);
+      agents[k].position[Agent::curr_state].y= fmod(agents[k].position[Agent::curr_state].y,domainsize);
+      agents[k].position[Agent::curr_state].z= fmod(agents[k].position[Agent::curr_state].z,domainsize);
 
     }
     update();
@@ -106,21 +107,22 @@ void Workspace::move()
 
 void Workspace::update(){
   for(size_t k = 0; k< na; k++){
-    Octree *lf = agents[k].leaf[1-curr_state];
+    Octree *lf = agents[k].leaf[1-Agent::curr_state];
     //Retirer de la liste si nécessaire et rajouter au bon endroit
-    if((lf->position > agents[k].position[1-curr_state]) 
-      || (agents[k].position[1-curr_state] > (lf->postion + width) {
-        lf.agents.erase(std::find(lf.agents.begin(),
-          lf.agents.end(),
-          agents[k]));
+    if((lf->position > agents[k].position[1-Agent::curr_state]) 
+      || (agents[k].position[1-Agent::curr_state] > (lf->position + Vector(1,1,1)*lf->width))) {
+        lf->agents.erase(std::find(lf->agents.begin(),
+          lf->agents.end(),
+          &agents[k]));
         lf->delete_leaves();
         oc.add(agents[k]);
       }
-}
+    }
+  }
 
 
 void Workspace::simulate(int nsteps) {
-  // store initial position[Agent.curr_state]s
+  // store initial position[Agent::curr_state]s
     save(0);
 
     // perform nsteps time steps of the simulation
@@ -140,7 +142,7 @@ void Workspace::save(int stepid) {
     myfile << std::endl;
     myfile << na << std::endl;
     for (size_t p=0; p<na; p++)
-        myfile << "B " << agents[p].position[Agent.curr_state];
+        myfile << "B " << agents[p].position[Agent::curr_state];
 
     myfile.close();
   }
