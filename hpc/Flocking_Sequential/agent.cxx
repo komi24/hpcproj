@@ -83,8 +83,8 @@ void Agent::returnNeighbours(
   Real rb, TemporaryContainer &b,
   Real rc, TemporaryContainer &c){
 
-  Octree *lf = leaf[Agent::cur_state];
-  List<Vector> positions;
+  Octree *lf = leaf[curr_state];
+  std::list<Vector> positions;
   positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z));
   positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z + lf->width));
   positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z - lf->width));  
@@ -108,7 +108,7 @@ void Agent::returnNeighbours(
   positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z));
   positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z + lf->width));
   positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z - lf->width));
-  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->lwidth,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z + lf->width));
   positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z - lf->width));
   positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z));
   positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z + lf->width));
@@ -119,10 +119,10 @@ void Agent::returnNeighbours(
   while (positions.size() != 0 ){
     ptr = ptr->parent;
     for (int i = 0; i < 8 ; i++){
-      Vector pos_node = child[i]->position;
+      Vector pos_node = ptr->child[i]->position;
        for (std::list<Vector>::iterator it = positions.begin(); it != positions.end(); it++){
-          if (((*it) > (pos_node+ child[i]->width)) && (pos_node > (*it) ){
-            add_neighbours(child[i],(*it),ra,a,rb,b,rc,c);
+          if (((*it) > (pos_node+ ptr->child[i]->width)) && (pos_node > (*it))){
+            add_neighbours(ptr->child[i],*it,ra,a,rb,b,rc,c);
           }
        }
     }
@@ -136,16 +136,17 @@ void Agent::add_neighbours(Octree *parent, Vector pos_leaf,
 
   if (parent->width > Octree::widthmin){
     for (int i = 0; i < 8; i++){
-        Octree *child_pos = child[i]->position;
-      if ((pos_leaf > child_pos) && ((child_pos +width))
-        add_neighbours(child[i],pos_leaf,ra,a,rb,b,rc,c);
+        Vector child_pos = parent->child[i]->position;
+      if ((pos_leaf > child_pos) && ((child_pos +parent->width) > pos_leaf))
+        add_neighbours(parent->child[i],pos_leaf,ra,a,rb,b,rc,c);
     }     
   }
   else {
-    for (std::vector<Agent*>::iterator it = parent->agents.begin(); it != parent->agent.end(); it++)){
-        Real norm = ((*it)->position- position).norm();
-        if (norm < ra )
-          a.push_back((*it);
+    for (std::vector<Agent*>::iterator it = parent->agents.begin(); it != parent->agents.end(); it++){
+
+        Real norm = (((*it)->position[curr_state])-position[curr_state]).norm();
+        if (norm < ra)
+          a.push_back(*it);
         if (norm < rb)
           b.push_back(*it);
         if (norm < rc)         

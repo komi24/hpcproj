@@ -22,6 +22,10 @@ class Vector
     }
 
     // Operators
+     Vector operator+( const Real& r) const {
+      return Vector( x + r, y + r, z + r);
+    }
+
     Vector operator+( const Vector& rhs ) const {
       return Vector( x + rhs.x, y + rhs.y, z + rhs.z );
     }

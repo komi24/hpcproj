@@ -52,7 +52,7 @@ class Agent{
     Real ra, TemporaryContainer &a,
     Real rb, TemporaryContainer &b,    
     Real rc, TemporaryContainer &c);
-    void Agent::add_neighbours(Octree *parent, Vector pos_leaf,
+    void add_neighbours(Octree *parent, Vector pos_leaf,
     Real ra, TemporaryContainer &a,
     Real rb, TemporaryContainer &b,
     Real rc, TemporaryContainer &c);
