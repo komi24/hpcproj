@@ -4,7 +4,7 @@
 #include "octree.hxx"
 
 void Tester::testConstruction(){
-	Octree oc = Octree(0.25,1);
+	Octree oc = Octree(0.5,1);
 	
 	Vector position(0, 0, 0);
 	Agent a(position, Zeros(), Zeros());
@@ -23,9 +23,17 @@ void Tester::testConstruction(){
     oc.add(a3);
 
     printOctree(&oc);
+    TemporaryContainer a,b,c;
+    a.returnNeighbours(0.5,a,0,b,1,c);
+
 
 }
+void Tester::printContainter(TemporaryContainer &c){
+	
 
+
+	
+}
 
 /*void Tester::testConstruction2(){
 
@@ -78,8 +86,8 @@ void Tester::printChild(Octree *oc, int p){
 		std::cout << "Feuille Position " << oc->position << " Width " << oc->width << std::endl;
 		for(TemporaryContainer::iterator it = oc->agents.begin(); it != oc->agents.end(); it++){
 			//printChild(oc->child[i],i);
-			for (int n=0; n<p+1; n++) std::cout << "	";
-			std::cout << "	Agent " << " position " << (*it)->position << std::endl;
+			//for (int n=0; n<p+1; n++) std::cout << "	";
+			std::cout << "	Agent " << " position " << (*it)->position[Agent::curr_state] << std::endl;
 		}
 	}
 

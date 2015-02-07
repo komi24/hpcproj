@@ -19,6 +19,7 @@ class Agent;
 
 typedef std::vector<Agent*> TemporaryContainer;
 
+
 class Agent{
   public :
     /* Current position and next position according to pos_state in octree*/
@@ -59,6 +60,7 @@ class Agent{
 };
 
 typedef std::deque<Agent> Container;
+
 
 
 #endif
