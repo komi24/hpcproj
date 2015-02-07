@@ -1,6 +1,7 @@
 #ifndef OCTREE
 #define OCTREE
 
+#include <list> 
 #include <vector>
 #include "vector.hxx"
 #include "types.hxx"
