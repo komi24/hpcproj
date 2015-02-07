@@ -1,7 +1,9 @@
 #ifndef TESTER
 #define TESTER
 
-class Octree;
+#include "agent.hxx"
+
+
 
 class Tester{
 public:
@@ -9,6 +11,7 @@ public:
 	//void testConstruction2();
 	void printOctree(Octree *oc);
 	void printChild(Octree *oc, int p);
+	void printContainer(TemporaryContainer &c);
 };
 
 #endif

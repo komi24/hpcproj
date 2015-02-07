@@ -4,42 +4,39 @@
 #include "octree.hxx"
 
 void Tester::testConstruction(){
-	Octree oc = Octree(0.5,1);
+	Octree oc = Octree(0.0625,1);
 	
-	Vector position(0, 0, 0);
+	Vector position(0.59, 0.53, 0.53);
 	Agent a(position, Zeros(), Zeros());
     oc.add(a);
 
 
-    Vector position1(0, 0.5, 0);    
+    Vector position1(0.53, 0.30, 0.53);    
 	Agent a1(position1, Zeros(), Zeros());
 	oc.add(a1);
 
 
-	Vector position2(0, 0, 0.5);    
+	Vector position2(0.59, 0.59, 0.59);    
 	Agent a2(position2, Zeros(), Zeros());
 	oc.add(a2);
 
-	Vector position3(1, 0.5, 0.5);
+	Vector position3(0.53, 0.53, 0.53);
 	Agent a3(position3, Zeros(), Zeros());
     oc.add(a3);
 
     printOctree(&oc);
-    TemporaryContainer a,b,c;
-    a.returnNeighbours(0.5,a,0,b,1,c);
-
-
-
-    TemporaryContainer a,b,c;
+    TemporaryContainer x,y,z;
+    a3.returnNeighbours(0.0625,x,0.0625,y,0.0625,z);
+    this->printContainer(z);
     
 
 
 }
-void Tester::printContainter(TemporaryContainer &c){
-	
-
-
-	
+void Tester::printContainer(TemporaryContainer &c){
+	std::cout << " liste des agents"<< std::endl;
+	for (TemporaryContainer::iterator it = c.begin(); it != c.end(); it++){
+		std::cout << "	Agent " << " position " << (*it)->position[Agent::curr_state] << std::endl;
+	}	
 }
 
 /*void Tester::testConstruction2(){

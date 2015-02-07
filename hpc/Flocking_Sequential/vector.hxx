@@ -83,9 +83,12 @@ class Vector
     bool operator!=( const Vector& rhs ) const {
       return !operator==( rhs );
     }
+  bool operator>( const Vector& rhs ) const {
+      return (x > rhs.x) && (y > rhs.y) && (z >rhs.z);
+    }
 
-    bool operator>( const Vector& rhs ) const {
-      return (x > rhs.x) && (y > rhs.y) && (z > rhs.z);
+    bool operator>=( const Vector& rhs ) const {
+      return (x >= rhs.x) && (y >= rhs.y) && (z >=rhs.z);
     }
 
     Real norm() {
