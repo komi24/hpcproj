@@ -71,7 +71,7 @@ void Workspace::move()
     for(size_t k = 0; k< na; k++){
       //TODO "agents" argument should be only those which are close enough
       //it will then depends on k and on the radius needed.
-      oc.returnNeighbours(agents[k],
+      agents[k].returnNeighbours(
         rSeparation, bufS,
         rCohesion, bufC,
         rAlignment, bufA);
