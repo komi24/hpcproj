@@ -34,6 +34,15 @@ class Agent{
     Vector cohesion(TemporaryContainer &agent_list, size_t index, double dist);
     Vector alignment(TemporaryContainer &agent_list, size_t index, double dist);
     size_t find_closest(Container &agent_list, size_t index);
+    void returnNeighbours(
+    Real ra, TemporaryContainer &a,
+    Real rb, TemporaryContainer &b,    
+    Real rc, TemporaryContainer &c);
+    void Agent::add_neighbours(Octree *parent, Vector pos_leaf,
+    Real ra, TemporaryContainer &a,
+    Real rb, TemporaryContainer &b,
+    Real rc, TemporaryContainer &c);
 };
+
 
 #endif

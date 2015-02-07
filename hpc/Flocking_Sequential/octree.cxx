@@ -56,14 +56,7 @@ void Octree::add(Agent &a) {
 		agents.push_back(&a);
 	}
 }
-	/* Return all the neighbours of an agent without itself */
-void Octree::returnNeighbours(const Agent a1,
-	Real ra, TemporaryContainer &a,
-	Real rb, TemporaryContainer &b,
-	Real rc, TemporaryContainer &c){
-
-}
-
+	
 
 void Octree::delete_leaves(){
 	if(agents.size() == 0 ){
