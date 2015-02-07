@@ -15,7 +15,7 @@ protected:
 //public:
   Container agents;
   /* Spatial data structure for agent search */
-  Octree oc;
+ 
   TemporaryContainer a,b,c;
   unsigned int na;
 
@@ -30,6 +30,7 @@ protected:
   Real domainsize;
   
 public:
+  Octree oc;
   //Workspace(){};
   Workspace(ArgumentParser &parser);
 
