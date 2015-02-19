@@ -6,6 +6,7 @@
 #include "workspace.hxx"
 #include "agent.hxx"
 #include "vector.hxx"
+#include "tester.hxx"
 //#include "octree.hxx"
 
 
@@ -63,7 +64,7 @@ void  Workspace::init(){
 
 }
 
-void Workspace::move()
+void Workspace::move(int step)
 {
     Vector s,c,a;
     TemporaryContainer bufS,bufC,bufA;
@@ -71,6 +72,7 @@ void Workspace::move()
     for(size_t k = 0; k< na; k++){
       //TODO "agents" argument should be only those which are close enough
       //it will then depends on k and on the radius needed.
+      std::cout << "ok1 " << k << " na " << na << std::endl; 
       agents[k].returnNeighbours(
         rSeparation, bufS,
         rCohesion, bufC,
@@ -88,20 +90,30 @@ void Workspace::move()
     //TODO Remark for report : parallelism gain thx to curr_state
     Agent::curr_state = 1 - Agent::curr_state;
     for(size_t k = 0; k< na; k++){
+      std::cout << "ok2 " << k << " na " << na << std::endl; 
       agents[k].velocity[Agent::curr_state] = agents[k].velocity[1-Agent::curr_state] + agents[k].direction[1-Agent::curr_state];
 
-      double speed = agents[k].velocity[1-Agent::curr_state].norm();
-      if (speed > maxU) {
-        agents[k].velocity[Agent::curr_state] = agents[k].velocity[1-Agent::curr_state] * maxU/speed;
-      }
+      double speed = agents[k].velocity[Agent::curr_state].norm();
+      if ((speed > maxU)) {
+        agents[k].velocity[Agent::curr_state] = agents[k].velocity[Agent::curr_state] * maxU/speed;
+        std::cout << " maxU/speed " << maxU/speed <<std::endl;
+        std::cout << " speed " << speed <<std::endl;
+        }
       agents[k].position[Agent::curr_state] = agents[k].position[1-Agent::curr_state] + dt*agents[k].velocity[1-Agent::curr_state];
 
       agents[k].position[Agent::curr_state].x= fmod(agents[k].position[Agent::curr_state].x,domainsize);
       agents[k].position[Agent::curr_state].y= fmod(agents[k].position[Agent::curr_state].y,domainsize);
       agents[k].position[Agent::curr_state].z= fmod(agents[k].position[Agent::curr_state].z,domainsize);
 
+      //agents[k].velocity[Agent::curr_state].x= fmod(agents[k].velocity[Agent::curr_state].x,10000);
+      //agents[k].velocity[Agent::curr_state].y= fmod(agents[k].velocity[Agent::curr_state].y,10000);
+      //agents[k].velocity[Agent::curr_state].z= fmod(agents[k].velocity[Agent::curr_state].z,10000);
+
     }
-    update();
+
+    std::cout << "caca " << step << std::endl; 
+    //update();
+    std::cout << "caca " << step  << std::endl; 
 }
 
 
@@ -109,11 +121,12 @@ void Workspace::update(){
   for(size_t k = 0; k< na; k++){
     Octree *lf = agents[k].leaf[1-Agent::curr_state];
     //Retirer de la liste si nécessaire et rajouter au bon endroit
-    if((lf->position > agents[k].position[1-Agent::curr_state]) 
-      || (agents[k].position[1-Agent::curr_state] > (lf->position + Vector(1,1,1)*lf->width))) {
+    if((lf->position > agents[k].position[Agent::curr_state]) 
+      || (agents[k].position[Agent::curr_state] >= (lf->position + Vector(1,1,1)*lf->width))) {
         lf->agents.erase(std::find(lf->agents.begin(),
           lf->agents.end(),
           &agents[k]));
+        //lf->agents.remove(&agents[k]);
         lf->delete_leaves();
         oc.add(agents[k]);
       }
@@ -124,11 +137,14 @@ void Workspace::update(){
 void Workspace::simulate(int nsteps) {
   // store initial position[Agent::curr_state]s
     save(0);
+    Tester tst;
 
     // perform nsteps time steps of the simulation
     int step = 0;
     while (step++ < nsteps) {
-      this->move();
+    std::cout << "coco" << step << std::endl; 
+      this->move(step);
+      tst.printOctree(& this->oc);
       // store every 20 steps
       if (step%20 == 0) save(step);
     }

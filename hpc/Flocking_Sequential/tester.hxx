@@ -12,6 +12,7 @@ public:
 	void printOctree(Octree *oc);
 	void printChild(Octree *oc, int p);
 	void printContainer(TemporaryContainer &c);
+	void testUpdate();
 };
 
 #endif

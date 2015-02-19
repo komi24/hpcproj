@@ -40,6 +40,7 @@ public:
 	/* TODO return smartly the next agent to compute 
 	to avoid re-computing too many distances */
 
+	bool isAllNull();
 
 	void  delete_leaves();
 };

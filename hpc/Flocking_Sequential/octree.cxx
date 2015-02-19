@@ -58,9 +58,14 @@ void Octree::add(Agent &a) {
 	}
 }
 	
-
+bool Octree::isAllNull(){
+	bool ret=true;
+	for (int i=0; i<8; i++)
+		ret = (child[i] == NULL) ? ret : false;
+	return ret; 
+}
 void Octree::delete_leaves(){
-	if(agents.size() == 0 ){
+	if((agents.size() == 0) && (isAllNull()) && (parent!=NULL) ){
 		Octree *p= parent;
 		parent->child[index]=NULL;
 		delete this;
