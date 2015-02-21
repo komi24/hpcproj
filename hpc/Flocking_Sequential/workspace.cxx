@@ -72,34 +72,46 @@ void Workspace::move(int step)
     for(size_t k = 0; k< na; k++){
       //TODO "agents" argument should be only those which are close enough
       //it will then depends on k and on the radius needed.
-      std::cout << "ok1 " << k << " na " << na << std::endl; 
+      //std::cout << "ok1 " << k << " na " << na << std::endl; 
       agents[k].returnNeighbours(
         rSeparation, bufS,
         rCohesion, bufC,
         rAlignment, bufA);
 
+      Tester tst;
+      //tst.printContainer(bufS);
+
       /* TODO no longer need of k */
       s = agents[k].separation(bufS, k, rSeparation);
       c = agents[k].cohesion(bufC, k, rCohesion);
       a = agents[k].alignment(bufA, k, rAlignment);
+      //std::cout << " s : " << s << std::endl;
+      //std::cout << " c : " << c << std::endl;
+      //std::cout << " a : " << a << std::endl;
 
       agents[k].direction[1-Agent::curr_state] = wCohesion*c + wAlignment*a + wSeparation*s;
+
     }
 
     // Integration in time using euler method
     //TODO Remark for report : parallelism gain thx to curr_state
     Agent::curr_state = 1 - Agent::curr_state;
     for(size_t k = 0; k< na; k++){
-      std::cout << "ok2 " << k << " na " << na << std::endl; 
-      agents[k].velocity[Agent::curr_state] = agents[k].velocity[1-Agent::curr_state] + agents[k].direction[1-Agent::curr_state];
+      //std::cout << "ok2 " << k << " na " << na << std::endl; 
+      agents[k].velocity[Agent::curr_state] = agents[k].velocity[1-Agent::curr_state] + agents[k].direction[Agent::curr_state];
 
       double speed = agents[k].velocity[Agent::curr_state].norm();
       if ((speed > maxU)) {
         agents[k].velocity[Agent::curr_state] = agents[k].velocity[Agent::curr_state] * maxU/speed;
-        std::cout << " maxU/speed " << maxU/speed <<std::endl;
-        std::cout << " speed " << speed <<std::endl;
-        }
+        //std::cout << " maxU/speed " << maxU/speed <<std::endl;
+      }
+
       agents[k].position[Agent::curr_state] = agents[k].position[1-Agent::curr_state] + dt*agents[k].velocity[1-Agent::curr_state];
+
+      //std::cout << " direction " << agents[k].direction[Agent::curr_state] <<std::endl;
+      //std::cout << " velocity " << agents[k].velocity[Agent::curr_state] <<std::endl;
+      //std::cout << " speed " << speed <<std::endl;
+      //std::cout << " position " << agents[k].position[Agent::curr_state] <<std::endl;
 
       agents[k].position[Agent::curr_state].x= fmod(agents[k].position[Agent::curr_state].x,domainsize);
       agents[k].position[Agent::curr_state].y= fmod(agents[k].position[Agent::curr_state].y,domainsize);
@@ -111,9 +123,10 @@ void Workspace::move(int step)
 
     }
 
-    std::cout << "caca " << step << std::endl; 
-    //update();
-    std::cout << "caca " << step  << std::endl; 
+    //std::cout << "caca " << step << std::endl; 
+    update();
+    //std::cout << "caca " << step  << std::endl; 
+    //std::cout << "state " << Agent::curr_state  << std::endl; 
 }
 
 
@@ -129,6 +142,8 @@ void Workspace::update(){
         //lf->agents.remove(&agents[k]);
         lf->delete_leaves();
         oc.add(agents[k]);
+      } else {
+        agents[k].leaf[Agent::curr_state]=lf;
       }
     }
   }
@@ -142,18 +157,18 @@ void Workspace::simulate(int nsteps) {
     // perform nsteps time steps of the simulation
     int step = 0;
     while (step++ < nsteps) {
-    std::cout << "coco" << step << std::endl; 
+    //std::cout << "coco" << step << std::endl; 
       this->move(step);
-      tst.printOctree(& this->oc);
+      //tst.printOctree(& this->oc);
       // store every 20 steps
-      if (step%20 == 0) save(step);
+      if (step%5 == 0) save(step);
     }
 }
 
 void Workspace::save(int stepid) {
   std::ofstream myfile;
 
-  myfile.open("boids.xyz", stepid==0 ? std::ios::out : std::ios::app);
+  myfile.open("boids2.xyz", stepid==0 ? std::ios::out : std::ios::app);
 
     myfile << std::endl;
     myfile << na << std::endl;
