@@ -46,6 +46,7 @@ public:
 
   
   void move(int step);
+  void move2(int step);
   void simulate(int nsteps);
   void save(int stepid);
 };

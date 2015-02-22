@@ -7,6 +7,8 @@
 #include "tester.hxx"
 //#include "agent.hxx"
 
+#include <ctime>
+
 // Main class for running the parallel flocking sim
 int main(int argc, char **argv) {
   // Create parser
@@ -16,9 +18,11 @@ int main(int argc, char **argv) {
   
   ArgumentParser parser;
   Tester tst;
+  time_t beg,end;
+  beg = time(NULL);
 
   // Add options to parser
-  parser.addOption("agents", 640);//640 originally
+  parser.addOption("agents", 800);//640 originally
   parser.addOption("steps", 500);//500
   parser.addOption("wc", 12);
   parser.addOption("wa", 15);
@@ -38,6 +42,9 @@ int main(int argc, char **argv) {
   // Launch simulation
   int nSteps = parser("steps").asInt();
   workspace.simulate(nSteps);
+
+  end = time(NULL);
+  std::cout << (double)difftime(end,beg) << std::endl;
 
   return 0;
 }

@@ -59,7 +59,7 @@ class Agent{
     Real rc, TemporaryContainer &c);
 };
 
-typedef std::deque<Agent> Container;
+typedef std::deque<Agent> Container; //deque
 
 
 
