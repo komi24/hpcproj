@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <omp.h>
 
 #include "workspace.hxx"
 #include "agent.hxx"
@@ -82,14 +83,19 @@ void  Workspace::init(){
 
 void Workspace::move(int step)//TODO erase step (just for tests)
 {
-    Vector s,c,a;
-    TemporaryContainer bufS,bufC,bufA;
+  Vector s,c,a;
+  TemporaryContainer bufS,bufC,bufA;
 
-    #pragma omp parallel for private(s,c,a,bufS,bufC,bufA)
+    #pragma omp parallel private(s,c,a,bufS,bufC,bufA)
+  {
+    /*int threadId = omp_get_thread_num(), nthread = omp_get_num_thread();
+    int start = threadId *3*na /nthread;
+    int end = ((threadId+1) * 3 * na / nthread > na) ? na : (threadId+1) * 3 * na / nthread;*/
+    #pragma omp for
     for(size_t k = 0; k< na; k++){
-      //bufS.clear();
-      //bufC.clear();
-      //bufA.clear();
+      bufS.clear();
+      bufC.clear();
+      bufA.clear();
       //TODO "agents" argument should be only those which are close enough
       //it will then depends on k and on the radius needed.
       //std::cout << "ok1 " << k << " na " << na << std::endl; 
@@ -98,25 +104,43 @@ void Workspace::move(int step)//TODO erase step (just for tests)
         rCohesion, bufC,
         rAlignment, bufA);
 
+//      std::cout << omp_get_thread_num() << std::endl;
+
       Tester tst;
      // tst.printContainer(bufC);
       //tst.printContainer(bufS);
 
       /* TODO no longer need of k */
-      //#pragma omp sections
-      //{
-      //#pragma omp section
-        //{
-          s = agents[k].separation(bufS, k, rSeparation);
-        //}
-      //#pragma omp section
-        //{
+      /*#pragma omp parallel num_threads(3)
+      {
+        #pragma omp sections
+        {
+        #pragma omp section
+        {
+        s = agents[k].separation(bufS, k, rSeparation);
+        std::cout << "a" << omp_get_thread_num() << std::endl;
+        }
+        #pragma omp section
+        {
           c = agents[k].cohesion(bufC, k, rCohesion);
-        //}
-      //#pragma omp section
-        //{
+          std::cout << "b" << omp_get_thread_num() << std::endl;
+        }
+        #pragma omp section
+        {
           a = agents[k].alignment(bufA, k, rAlignment);
-        //}
+          std::cout << "c" << omp_get_thread_num() << std::endl;
+        }}
+      }*/
+        s = agents[k].separation(bufS, k, rSeparation);
+        c = agents[k].cohesion(bufC, k, rCohesion);
+        a = agents[k].alignment(bufA, k, rAlignment);
+/*      if(threadId%3==0){
+        s = agents[k].separation(bufS, k, rSeparation);
+      } elsif(threadId%3==1) {
+        c = agents[k].cohesion(bufC, k, rCohesion);
+      } else {
+        a = agents[k].alignment(bufA, k, rAlignment);
+      }*/
       //std::cout << " s : " << s << std::endl;
       //std::cout << " c : " << c << std::endl;
       //std::cout << " a : " << a << std::endl;
@@ -143,6 +167,7 @@ void Workspace::move(int step)//TODO erase step (just for tests)
       agents[k].position[1-Agent::curr_state].z= fmod(agents[k].position[1-Agent::curr_state].z,domainsize);
 
     }
+  }
 
     // Integration in time using euler method
     //TODO Remark for report : parallelism gain thx to curr_state
@@ -263,6 +288,7 @@ void Workspace::move2(int step)//TODO erase step (just for tests)
 }
 
 void Workspace::update(){
+  //#pragma omp parallel for
   for(size_t k = 0; k< na; k++){
     Octree *lf = agents[k].leaf[1-Agent::curr_state];
     //Retirer de la liste si nécessaire et rajouter au bon endroit
@@ -293,7 +319,7 @@ void Workspace::simulate(int nsteps) {
       this->move(step);
       //tst.printOctree(& this->oc);
       // store every 20 steps
-      if (step%100 == 0) save(step);
+      if (step%20 == 0) save(step);
     }
 }
 

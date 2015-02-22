@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Os -Wall -fopenmp
+CXXFLAGS = -O2 -fopenmp -Wall
 SRCS = $(wildcard *.cxx)
 PROG = boids
 OBJS = $(SRCS:%.cxx=%.o)
