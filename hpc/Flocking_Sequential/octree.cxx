@@ -5,6 +5,7 @@
 #include "agent.hxx"
 
 Real Octree::widthmin;
+LeafContainer Octree::Leafs;
 
 Octree::Octree(Real width, 
 	Octree *parent, 
@@ -17,6 +18,9 @@ Octree::Octree(Real width,
 	this->position = *(new Vector (position.x, position.y, position.z));
 	for(int i =0; i<8; i++)
 		child[i]=NULL;
+	if (width <= widthmin)
+		Leafs.push_back(this);
+	
 }
 
 Octree::Octree(Real wmin, Real width){

@@ -24,6 +24,7 @@ public:
 
 	TemporaryContainer agents; // we may use a different data structure than for neighbours
 	static Real widthmin;
+	static LeafContainer Leafs;
 	
 	Octree(){Octree(0,0);};
 	Octree(Real wmin, Real width);

@@ -16,7 +16,7 @@ protected:
   Container agents;
   /* Spatial data structure for agent search */
  
-  TemporaryContainer a,b,c;
+  
   unsigned int na;
 
   Real dt;

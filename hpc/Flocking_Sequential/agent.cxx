@@ -78,70 +78,7 @@ Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad)
 }*/
 
 /* Return all the neighbours of an agent without itself */
-void Agent::returnNeighbours(
-  Real ra, TemporaryContainer &a,
-  Real rb, TemporaryContainer &b,
-  Real rc, TemporaryContainer &c){
 
-  Octree *lf = leaf[curr_state];
-  std::list<Vector> positions;
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z));
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z - lf->width));  
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z));
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z - lf->width));
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width,lf->position.z));
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width ,lf->position.z - lf->width));
-
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z));
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z - lf->width));  
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z));
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z - lf->width));
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width,lf->position.z));
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width ,lf->position.z - lf->width));
-
-  positions.push_back(Vector(lf->position.x ,lf->position.y ,lf->position.z));
-  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z));
-  positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z - lf->width));
-  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z - lf->width));
-  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z));
-  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z + lf->width));
-  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width ,lf->position.z - lf->width));
-
-  
-  Octree *ptr = lf;
- 
- 
-  while (ptr->parent != NULL){
-
-    ptr = ptr->parent;
- 
-       
-    Vector pos_node = ptr->position;
-
-      for (std::list<Vector>::iterator it = positions.begin(); it != positions.end();){
-        
-        if (((*it) >= pos_node) && ( (pos_node+ ptr->width)> (*it))){  
-        
-          
-          add_neighbours(ptr,*it,ra,a,rb,b,rc,c);
-          std::list<Vector>::iterator it2 = it;
-          it++;
-          positions.erase(it2);
-        
-        }
-        else
-          it++;
-      }    
-  }
-}
 void Agent::add_neighbours(Octree *parent, Vector pos_leaf,
   Real ra, TemporaryContainer &a,
   Real rb, TemporaryContainer &b,

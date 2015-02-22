@@ -68,6 +68,8 @@ void Workspace::move()
     Vector s,c,a;
     TemporaryContainer bufS,bufC,bufA;
 
+    
+
     for(size_t k = 0; k< na; k++){
       //TODO "agents" argument should be only those which are close enough
       //it will then depends on k and on the radius needed.
