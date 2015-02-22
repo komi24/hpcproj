@@ -37,9 +37,9 @@ class Agent{
 
     Agent(const Vector &pos, const Vector &vel, const Vector &dir);
 
-    Vector separation(TemporaryContainer &agent_list, size_t index, double dist);
-    Vector cohesion(TemporaryContainer &agent_list, size_t index, double dist);
-    Vector alignment(TemporaryContainer &agent_list, size_t index, double dist);
+    Vector separation(TemporaryContainer &agent_list,  double dist);
+    Vector cohesion(TemporaryContainer &agent_list, double dist);
+    Vector alignment(TemporaryContainer &agent_list, double dist);
     //size_t find_closest(Container &agent_list, size_t index);
 
 /*    bool operator==( const Vector& rhs ) const {
@@ -50,7 +50,7 @@ class Agent{
       return !operator==( rhs );
     }*/
 
-
+};
 typedef std::deque<Agent> Container; //deque
 
 

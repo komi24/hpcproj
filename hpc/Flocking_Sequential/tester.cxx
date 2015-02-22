@@ -28,7 +28,7 @@ void Tester::testConstruction(){
 
     printOctree(&oc);
     TemporaryContainer x,y,z;
-    a3.returnNeighbours(0.0625,x,0.0625,y,0.0625,z);
+   // a3.returnNeighbours(0.0625,x,0.0625,y,0.0625,z);
     this->printContainer(z);
 }
 

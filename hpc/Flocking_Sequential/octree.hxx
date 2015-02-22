@@ -7,7 +7,7 @@
 #include "types.hxx"
 #include "agent.hxx"
 //class Agent;
-class octree;
+class Octree;
 
 typedef std::vector<Octree*> LeafContainer;
 class Octree {
@@ -36,7 +36,7 @@ public:
 
 	/* Return all the neighbours of an agent without itself */
 	void returnNeighboursLeaf(TemporaryContainer neighbours);
-	void add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer neighbours);
+	void add_neighbours( Octree *parent, Vector pos_leaf,TemporaryContainer neighbours);
 
 	/* TODO return smartly the next agent to compute 
 	to avoid re-computing too many distances */

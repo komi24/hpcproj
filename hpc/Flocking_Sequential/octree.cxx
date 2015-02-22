@@ -123,7 +123,7 @@ std::list<Vector> positions;
       }    
   }
 }
-void Octree::add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer neighbours)){
+void Octree::add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer neighbours){
 
   if (parent->width > Octree::widthmin){
   
@@ -134,14 +134,14 @@ void Octree::add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer n
         if ((pos_leaf >= child_pos) && ((child_pos + (parent->child[i]->width)) > pos_leaf)){
            
 
-           add_neighbours(parent->child[i],pos_leaf,neighbours;
+           add_neighbours(parent->child[i],pos_leaf,neighbours);
            return;
         }
       }
     }     
   }
   else {
-    neighbours.insert( neighbours.end(), parent->agents.begin(), parent->agents.vector2.end() );
+    neighbours.insert( neighbours.end(), parent->agents.begin(), parent->agents.end() );
 	}
     
 }
@@ -159,8 +159,10 @@ void Octree::delete_leaves(){
 	if((agents.size() == 0) && (isAllNull()) && (parent!=NULL) ){
 		Octree *p= parent;
 		parent->child[index]=NULL;
-    if (width < widthmin)
-        leafs.erase(std::find(leafs.begin(),leafs.end(),this));
+    if (width < widthmin){
+        Octree *lf = this;
+       // leafs.erase(std::find(leafs.begin(),leafs.end(),lf));
+      }
 		delete this;
 		p->delete_leaves();
 	}

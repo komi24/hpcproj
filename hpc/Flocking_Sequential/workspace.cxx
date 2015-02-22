@@ -86,40 +86,40 @@ void Workspace::move(int step)//TODO erase step (just for tests)
     LeafContainer leafs = Octree::leafs;
     TemporaryContainer nb;
     for (LeafContainer::iterator it = leafs.begin(); it != leafs.end(); it++){
-        nb.erase();
-        it->returnNeighboursLeaf(nb);
-        TemporaryContainer agentsleaf = it->agents;
-        for (TemporaryContainer::iterator it2 = agentsleaf.begin(); it2 != agentsleaf.end(); it2++)){
+        nb.clear();
+        (*it)->returnNeighboursLeaf(nb);
+        TemporaryContainer agentsleaf = (*it)->agents;
+        for (TemporaryContainer::iterator it2 = agentsleaf.begin(); it2 != agentsleaf.end(); it2++){
             
-         s = (*it)->separation(nb, rSeparation);
+         s = (*it2)->separation(nb, rSeparation);
         //}
       //#pragma omp section
         //{
-          c = (*it).cohesion(nb, rCohesion);
+          c = (*it2)->cohesion(nb, rCohesion);
         //}
       //#pragma omp section
         //{
-          a = (*it)->alignment(nb, rAlignment);
-          (*it)->direction[1-Agent::curr_state] = wCohesion*c + wAlignment*a + wSeparation*s;
+          a = (*it2)->alignment(nb, rAlignment);
+          (*it2)->direction[1-Agent::curr_state] = wCohesion*c + wAlignment*a + wSeparation*s;
       
-      (*it)->velocity[1-Agent::curr_state] = (*it)->velocity[Agent::curr_state] + (*it)->direction[1-Agent::curr_state];
+      (*it2)->velocity[1-Agent::curr_state] = (*it2)->velocity[Agent::curr_state] + (*it2)->direction[1-Agent::curr_state];
 
-      double speed = (*it)->velocity[1-Agent::curr_state].norm();
+      double speed = (*it2)->velocity[1-Agent::curr_state].norm();
       if ((speed > maxU)) {
-        (*it)->velocity[1-Agent::curr_state] = (*it)->velocity[1-Agent::curr_state] * maxU/speed;
+        (*it2)->velocity[1-Agent::curr_state] = (*it2)->velocity[1-Agent::curr_state] * maxU/speed;
         //std::cout << " maxU/speed " << maxU/speed <<std::endl;
       }
 
-      (*it)->position[1-Agent::curr_state] = (*it)->position[Agent::curr_state] + dt*(*it)->velocity[Agent::curr_state];
+      (*it2)->position[1-Agent::curr_state] = (*it2)->position[Agent::curr_state] + dt*(*it2)->velocity[Agent::curr_state];
 
       //std::cout << " direction " << agents[k].direction[Agent::curr_state] <<std::endl;
       //std::cout << " velocity " << agents[k].velocity[Agent::curr_state] <<std::endl;
       //std::cout << " speed " << speed <<std::endl;
       //std::cout << " position " << agents[k].position[Agent::curr_state] <<std::endl;
 
-      (*it)->position[1-Agent::curr_state].x= fmod(agents[k].position[1-Agent::curr_state].x,domainsize);
-      (*it)->position[1-Agent::curr_state].y= fmod(agents[k].position[1-Agent::curr_state].y,domainsize);
-      (*it)->position[1-Agent::curr_state].z= fmod(agents[k].position[1-Agent::curr_state].z,domainsize);
+      (*it2)->position[1-Agent::curr_state].x= fmod((*it2)->position[1-Agent::curr_state].x,domainsize);
+      (*it2)->position[1-Agent::curr_state].y= fmod((*it2)->position[1-Agent::curr_state].y,domainsize);
+      (*it2)->position[1-Agent::curr_state].z= fmod((*it2)->position[1-Agent::curr_state].z,domainsize);
 
         }
 

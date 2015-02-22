@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   beg = time(NULL);
 
   // Add options to parser
-  parser.addOption("agents", 800);//640 originally
+  parser.addOption("agents", 3000);//640 originally
   parser.addOption("steps", 500);//500
   parser.addOption("wc", 12);
   parser.addOption("wa", 15);
