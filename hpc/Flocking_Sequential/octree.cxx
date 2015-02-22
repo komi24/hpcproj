@@ -57,7 +57,89 @@ void Octree::add(Agent &a) {
 		agents.push_back(&a);
 	}
 }
-	
+void Octree::returnNeighboursLeaf(LeafContainer leafs){
+Octree *lf = this;
+
+std::list<Vector> positions;
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z - lf->width));  
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width ,lf->position.z - lf->width));
+
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z - lf->width));  
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width ,lf->position.z - lf->width));
+
+  positions.push_back(Vector(lf->position.x ,lf->position.y ,lf->position.z));
+  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width ,lf->position.z - lf->width));
+
+  
+  Octree *ptr = lf;
+ 
+ 
+  while (ptr->parent != NULL){
+
+    ptr = ptr->parent;
+ 
+       
+    Vector pos_node = ptr->position;
+
+      for (std::list<Vector>::iterator it = positions.begin(); it != positions.end();){
+        
+        if (((*it) >= pos_node) && ( (pos_node+ ptr->width)> (*it))){  
+        
+          
+          add_neighbours(leafs);
+          std::list<Vector>::iterator it2 = it;
+          it++;
+          positions.erase(it2);
+        
+        }
+        else
+          it++;
+      }    
+  }
+}
+void Octree::add_neighbours(Octree *parent, Vector pos_leaf,LeafContainer leafs){
+
+  if (parent->width > Octree::widthmin){
+  
+    for (int i = 0; i < 8; i++){
+      if (parent->child[i] != NULL){
+      
+        Vector child_pos = parent->child[i]->position;
+        if ((pos_leaf >= child_pos) && ((child_pos + (parent->child[i]->width)) > pos_leaf)){
+           
+
+           add_neighbours(parent->child[i],pos_leaf,leafs);
+           return;
+        }
+      }
+    }     
+  }
+  else {
+  	leafs.push_back(parent);
+	}
+    
+}
 
 void Octree::delete_leaves(){
 	if(agents.size() == 0 ){
