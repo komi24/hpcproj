@@ -15,6 +15,19 @@ Agent::Agent(const Vector &pos, const Vector &vel, const Vector &dir){
 
 
 Vector Agent::separation(TemporaryContainer &agent_list, size_t index, double rad) {
+Vector force = Zeros();
+    for(size_t i = 0; i < agent_list.size(); i++) {
+    //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
+    //if (i != index && dist < rad) {
+      // TODO the comparison is no longer needed //
+      force -= (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).normalized();
+      //++count;
+    //}
+    }
+  return ( agent_list.size() >0 ? force/agent_list.size() : force);
+}
+
+/*Vector Agent::separation(TemporaryContainer &agent_list, size_t index, double rad) {
   Real forcex = 0;
   Real forcey = 0;
   Real forcez = 0;
@@ -25,7 +38,7 @@ Vector Agent::separation(TemporaryContainer &agent_list, size_t index, double ra
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcex -= (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).normalized().x;
       //++count;
     //}
@@ -34,7 +47,7 @@ Vector Agent::separation(TemporaryContainer &agent_list, size_t index, double ra
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcey -= (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).normalized().y;
       //++count;
     //}
@@ -43,7 +56,7 @@ Vector Agent::separation(TemporaryContainer &agent_list, size_t index, double ra
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcez -= (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).normalized().z;
       //++count;
     //}
@@ -51,9 +64,22 @@ Vector Agent::separation(TemporaryContainer &agent_list, size_t index, double ra
   }
   Vector force(forcex,forcey,forcez);
   return ( agent_list.size() >0 ? force/agent_list.size() : force);
-}
+}*/
 
 Vector Agent::cohesion(TemporaryContainer &agent_list, size_t index, double rad) {
+Vector force = Zeros();
+  //int count = 0;
+    for(size_t i = 0; i < agent_list.size(); i++) {
+    //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
+    //if (i != index && dist < rad) {
+      // TODO the comparison is no longer needed //
+      force += agent_list[i]->position[this->curr_state];
+      //++count;
+    //}
+    }
+  return ( agent_list.size() >0 ? force/agent_list.size() : force);
+}
+/*Vector Agent::cohesion(TemporaryContainer &agent_list, size_t index, double rad) {
   Real forcex = 0;
   Real forcey = 0;
   Real forcez = 0;
@@ -64,7 +90,7 @@ Vector Agent::cohesion(TemporaryContainer &agent_list, size_t index, double rad)
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcex += agent_list[i]->position[this->curr_state].x;
       //++count;
     //}
@@ -73,7 +99,7 @@ Vector Agent::cohesion(TemporaryContainer &agent_list, size_t index, double rad)
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcey += agent_list[i]->position[this->curr_state].y;
       //++count;
     //}
@@ -82,7 +108,7 @@ Vector Agent::cohesion(TemporaryContainer &agent_list, size_t index, double rad)
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcez += agent_list[i]->position[this->curr_state].z;
       //++count;
     //}
@@ -90,9 +116,23 @@ Vector Agent::cohesion(TemporaryContainer &agent_list, size_t index, double rad)
   }
   Vector force(forcex,forcey,forcez);
   return ( agent_list.size() >0 ? force/agent_list.size() : force);
-}
+}*/
 
 Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad) {
+Vector force = Zeros();
+  //int count = 0;
+    for(size_t i = 0; i < agent_list.size(); i++) {
+    //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
+    //if (i != index && dist < rad) {
+      // TODO the comparison is no longer needed //
+      force += agent_list[i]->velocity[this->curr_state];
+      //++count;
+    //}
+    }
+  return ( agent_list.size() >0 ? force/agent_list.size() : force);
+}
+
+/*Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad) {
   Real forcex = 0;
   Real forcey = 0;
   Real forcez = 0;
@@ -103,7 +143,7 @@ Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad)
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcex += agent_list[i]->velocity[this->curr_state].x;
       //++count;
     //}
@@ -112,7 +152,7 @@ Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad)
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcey += agent_list[i]->velocity[this->curr_state].y;
       //++count;
     //}
@@ -121,7 +161,7 @@ Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad)
     for(size_t i = 0; i < agent_list.size(); i++) {
     //double dist = (this->position[this->curr_state] - agent_list[i]->position[this->curr_state]).norm();
     //if (i != index && dist < rad) {
-      /* TODO the comparison is no longer needed */
+      // TODO the comparison is no longer needed //
       forcez += agent_list[i]->velocity[this->curr_state].z;
       //++count;
     //}
@@ -129,7 +169,7 @@ Vector Agent::alignment(TemporaryContainer&agent_list, size_t index, double rad)
   }
   Vector force(forcex,forcey,forcez);
   return ( agent_list.size() >0 ? force/agent_list.size() : force);
-}
+}*/
 
 /*size_t Agent::find_closest(Container &agent_list, size_t index) {
   size_t closest_agent = index;
