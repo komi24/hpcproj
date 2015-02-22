@@ -51,7 +51,7 @@ class Agent{
     }*/
 
 
-typedef std::deque<Agent> Container;
+typedef std::deque<Agent> Container; //deque
 
 
 

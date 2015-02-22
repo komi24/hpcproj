@@ -11,8 +11,8 @@
 
 class Workspace
 {
-protected:
-//public:
+//protected:
+public:
   Container agents;
   /* Spatial data structure for agent search */
  
@@ -29,7 +29,7 @@ protected:
 
   Real domainsize;
   
-public:
+//public:
   Octree oc;
   //Workspace(){};
   Workspace(ArgumentParser &parser);
@@ -45,7 +45,8 @@ public:
   void update();
 
   
-  void move();
+  void move(int step);
+  void move2(int step);
   void simulate(int nsteps);
   void save(int stepid);
 };

@@ -24,7 +24,7 @@ public:
 
 	TemporaryContainer agents; // we may use a different data structure than for neighbours
 	static Real widthmin;
-	static LeafContainer Leafs;
+	static LeafContainer leafs;
 	
 	Octree(){Octree(0,0);};
 	Octree(Real wmin, Real width);
@@ -35,12 +35,13 @@ public:
 
 
 	/* Return all the neighbours of an agent without itself */
-	void returnNeighboursLeaf(LeafContainer leafs);
-	void add_neighbours(Octree *parent, Vector pos_leaf,LeafContainer leafs);
+	void returnNeighboursLeaf(TemporaryContainer neighbours);
+	void add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer neighbours);
 
 	/* TODO return smartly the next agent to compute 
 	to avoid re-computing too many distances */
 
+	bool isAllNull();
 
 	void  delete_leaves();
 };

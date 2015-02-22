@@ -1,0 +1,2 @@
+The simulation will be executed with the following parameters 
+[-agents 640 ] [-ra 0.15 ] [-rc 0.11 ] [-rs 0.01 ] [-steps 500 ] [-wa 15 ] [-wc 12 ] [-ws 35 ] 

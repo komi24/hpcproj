@@ -1,7 +1,9 @@
 #include "tester.hxx"
 
 #include <iostream>
+#include <ctime>
 #include "octree.hxx"
+#include "workspace.hxx"
 
 void Tester::testConstruction(){
 	Octree oc = Octree(0.0625,1);
@@ -28,10 +30,22 @@ void Tester::testConstruction(){
     TemporaryContainer x,y,z;
     a3.returnNeighbours(0.0625,x,0.0625,y,0.0625,z);
     this->printContainer(z);
-    
-
-
 }
+
+void Tester::testUpdate(){
+	Workspace wkspce(3,1,1,1,0.01,0.05,0.02);
+	srand48(std::time(0)+100);
+	printOctree(&(wkspce.oc));
+	Agent::curr_state = 1- Agent::curr_state;
+	for (uint k=0; k<wkspce.agents.size(); k++){
+		std::cout << " Ancienne position " << wkspce.agents[k].position[1-Agent::curr_state] <<std::endl;
+		wkspce.agents[k].position[Agent::curr_state] = Vector(drand48(),drand48(),drand48());
+		std::cout << " Nouvelle position " << wkspce.agents[k].position[Agent::curr_state] <<std::endl <<std::endl;
+	}
+	wkspce.update();
+	printOctree(&(wkspce.oc));
+}
+
 void Tester::printContainer(TemporaryContainer &c){
 	std::cout << " liste des agents"<< std::endl;
 	for (TemporaryContainer::iterator it = c.begin(); it != c.end(); it++){
@@ -92,6 +106,7 @@ void Tester::printChild(Octree *oc, int p){
 			//printChild(oc->child[i],i);
 			//for (int n=0; n<p+1; n++) std::cout << "	";
 			std::cout << "	Agent " << " position " << (*it)->position[Agent::curr_state] << std::endl;
+			std::cout << "	Agent " << " velocity " << (*it)->velocity[Agent::curr_state] << std::endl;
 		}
 	}
 

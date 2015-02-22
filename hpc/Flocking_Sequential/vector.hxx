@@ -96,7 +96,8 @@ class Vector
     }
 
     Vector normalized(){
-      double inorm = 1./this->norm();
+      double inorm = (this->norm() != 0) ? 1./this->norm() : 1;
+    
       return Vector(x*inorm,y*inorm,z*inorm);
     }
 

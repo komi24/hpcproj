@@ -5,7 +5,7 @@
 #include "agent.hxx"
 
 Real Octree::widthmin;
-LeafContainer Octree::Leafs;
+LeafContainer Octree::leafs;
 
 Octree::Octree(Real width, 
 	Octree *parent, 
@@ -18,8 +18,8 @@ Octree::Octree(Real width,
 	this->position = *(new Vector (position.x, position.y, position.z));
 	for(int i =0; i<8; i++)
 		child[i]=NULL;
-	if (width <= widthmin)
-		Leafs.push_back(this);
+	if (width < widthmin)
+		leafs.push_back(this);
 	
 }
 
@@ -34,7 +34,7 @@ Octree::Octree(Real wmin, Real width){
 
 
 void Octree::add(Agent &a) {
-	if (width > widthmin) {
+	if (width >= widthmin) {
 		int i = 0;
 		Vector new_position(position.x, position.y, position.z);
 		if (a.position[Agent::curr_state].x > position.x + width/2){
@@ -61,7 +61,8 @@ void Octree::add(Agent &a) {
 		agents.push_back(&a);
 	}
 }
-void Octree::returnNeighboursLeaf(LeafContainer leafs){
+
+void Octree::returnNeighboursLeaf(TemporaryContainer neighbours){
 Octree *lf = this;
 
 std::list<Vector> positions;
@@ -111,7 +112,7 @@ std::list<Vector> positions;
         if (((*it) >= pos_node) && ( (pos_node+ ptr->width)> (*it))){  
         
           
-          add_neighbours(leafs);
+          add_neighbours(ptr,*it,neighbours);
           std::list<Vector>::iterator it2 = it;
           it++;
           positions.erase(it2);
@@ -122,7 +123,7 @@ std::list<Vector> positions;
       }    
   }
 }
-void Octree::add_neighbours(Octree *parent, Vector pos_leaf,LeafContainer leafs){
+void Octree::add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer neighbours)){
 
   if (parent->width > Octree::widthmin){
   
@@ -133,22 +134,33 @@ void Octree::add_neighbours(Octree *parent, Vector pos_leaf,LeafContainer leafs)
         if ((pos_leaf >= child_pos) && ((child_pos + (parent->child[i]->width)) > pos_leaf)){
            
 
-           add_neighbours(parent->child[i],pos_leaf,leafs);
+           add_neighbours(parent->child[i],pos_leaf,neighbours;
            return;
         }
       }
     }     
   }
   else {
-  	leafs.push_back(parent);
+    neighbours.insert( neighbours.end(), parent->agents.begin(), parent->agents.vector2.end() );
 	}
     
 }
 
+
+	
+bool Octree::isAllNull(){
+	bool ret=true;
+	for (int i=0; i<8; i++)
+		ret = (child[i] == NULL) ? ret : false;
+	return ret; 
+}
+
 void Octree::delete_leaves(){
-	if(agents.size() == 0 ){
+	if((agents.size() == 0) && (isAllNull()) && (parent!=NULL) ){
 		Octree *p= parent;
 		parent->child[index]=NULL;
+    if (width < widthmin)
+        leafs.erase(std::find(leafs.begin(),leafs.end(),this));
 		delete this;
 		p->delete_leaves();
 	}
