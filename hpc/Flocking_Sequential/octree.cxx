@@ -5,6 +5,7 @@
 #include "agent.hxx"
 
 Real Octree::widthmin;
+LeafContainer Octree::leafs;
 
 Octree::Octree(Real width, 
 	Octree *parent, 
@@ -17,6 +18,9 @@ Octree::Octree(Real width,
 	this->position = *(new Vector (position.x, position.y, position.z));
 	for(int i =0; i<8; i++)
 		child[i]=NULL;
+	if (width < widthmin)
+		leafs.push_back(this);
+	
 }
 
 Octree::Octree(Real wmin, Real width){
@@ -30,7 +34,7 @@ Octree::Octree(Real wmin, Real width){
 
 
 void Octree::add(Agent &a) {
-	if (width > widthmin) {
+	if (width >= widthmin) {
 		int i = 0;
 		Vector new_position(position.x, position.y, position.z);
 		if (a.position[Agent::curr_state].x > position.x + width/2){
@@ -57,6 +61,92 @@ void Octree::add(Agent &a) {
 		agents.push_back(&a);
 	}
 }
+
+void Octree::returnNeighboursLeaf(TemporaryContainer neighbours){
+Octree *lf = this;
+
+std::list<Vector> positions;
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y,lf->position.z - lf->width));  
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y + lf->width,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x + lf->width,lf->position.y - lf->width ,lf->position.z - lf->width));
+
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y,lf->position.z - lf->width));  
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y + lf->width,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x - lf->width,lf->position.y - lf->width ,lf->position.z - lf->width));
+
+  positions.push_back(Vector(lf->position.x ,lf->position.y ,lf->position.z));
+  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y + lf->width,lf->position.z - lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z));
+  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width,lf->position.z + lf->width));
+  positions.push_back(Vector(lf->position.x ,lf->position.y - lf->width ,lf->position.z - lf->width));
+
+  
+  Octree *ptr = lf;
+ 
+ 
+  while (ptr->parent != NULL){
+
+    ptr = ptr->parent;
+ 
+       
+    Vector pos_node = ptr->position;
+
+      for (std::list<Vector>::iterator it = positions.begin(); it != positions.end();){
+        
+        if (((*it) >= pos_node) && ( (pos_node+ ptr->width)> (*it))){  
+        
+          
+          add_neighbours(ptr,*it,neighbours);
+          std::list<Vector>::iterator it2 = it;
+          it++;
+          positions.erase(it2);
+        
+        }
+        else
+          it++;
+      }    
+  }
+}
+void Octree::add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer neighbours){
+
+  if (parent->width > Octree::widthmin){
+  
+    for (int i = 0; i < 8; i++){
+      if (parent->child[i] != NULL){
+      
+        Vector child_pos = parent->child[i]->position;
+        if ((pos_leaf >= child_pos) && ((child_pos + (parent->child[i]->width)) > pos_leaf)){
+           
+
+           add_neighbours(parent->child[i],pos_leaf,neighbours);
+           return;
+        }
+      }
+    }     
+  }
+  else {
+    neighbours.insert( neighbours.end(), parent->agents.begin(), parent->agents.end() );
+	}
+    
+}
+
+
 	
 bool Octree::isAllNull(){
 	bool ret=true;
@@ -64,10 +154,15 @@ bool Octree::isAllNull(){
 		ret = (child[i] == NULL) ? ret : false;
 	return ret; 
 }
+
 void Octree::delete_leaves(){
 	if((agents.size() == 0) && (isAllNull()) && (parent!=NULL) ){
 		Octree *p= parent;
 		parent->child[index]=NULL;
+    if (width < widthmin){
+        Octree *lf = this;
+       // leafs.erase(std::find(leafs.begin(),leafs.end(),lf));
+      }
 		delete this;
 		p->delete_leaves();
 	}

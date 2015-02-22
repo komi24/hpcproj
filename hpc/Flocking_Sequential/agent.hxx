@@ -37,9 +37,9 @@ class Agent{
 
     Agent(const Vector &pos, const Vector &vel, const Vector &dir);
 
-    Vector separation(TemporaryContainer &agent_list, size_t index, double dist);
-    Vector cohesion(TemporaryContainer &agent_list, size_t index, double dist);
-    Vector alignment(TemporaryContainer &agent_list, size_t index, double dist);
+    Vector separation(TemporaryContainer &agent_list,  double dist);
+    Vector cohesion(TemporaryContainer &agent_list, double dist);
+    Vector alignment(TemporaryContainer &agent_list, double dist);
     //size_t find_closest(Container &agent_list, size_t index);
 
 /*    bool operator==( const Vector& rhs ) const {
@@ -49,16 +49,8 @@ class Agent{
     bool operator!=( const Vector& rhs ) const {
       return !operator==( rhs );
     }*/
-    void returnNeighbours(
-    Real ra, TemporaryContainer &a,
-    Real rb, TemporaryContainer &b,    
-    Real rc, TemporaryContainer &c);
-    void add_neighbours(Octree *parent, Vector pos_leaf,
-    Real ra, TemporaryContainer &a,
-    Real rb, TemporaryContainer &b,
-    Real rc, TemporaryContainer &c);
-};
 
+};
 typedef std::deque<Agent> Container; //deque
 
 

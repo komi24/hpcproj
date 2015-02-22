@@ -7,7 +7,9 @@
 #include "types.hxx"
 #include "agent.hxx"
 //class Agent;
+class Octree;
 
+typedef std::vector<Octree*> LeafContainer;
 class Octree {
 
 public:	
@@ -22,6 +24,7 @@ public:
 
 	TemporaryContainer agents; // we may use a different data structure than for neighbours
 	static Real widthmin;
+	static LeafContainer leafs;
 	
 	Octree(){Octree(0,0);};
 	Octree(Real wmin, Real width);
@@ -32,10 +35,8 @@ public:
 
 
 	/* Return all the neighbours of an agent without itself */
-	void returnNeighbours(const Agent a1,
-	 Real ra, TemporaryContainer &a,
-	 Real rb, TemporaryContainer &b,
-	 Real rc, TemporaryContainer &c);
+	void returnNeighboursLeaf(TemporaryContainer neighbours);
+	void add_neighbours( Octree *parent, Vector pos_leaf,TemporaryContainer neighbours);
 
 	/* TODO return smartly the next agent to compute 
 	to avoid re-computing too many distances */
