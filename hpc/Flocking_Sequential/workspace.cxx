@@ -83,56 +83,74 @@ void  Workspace::init(){
 
 void Workspace::move(int step)//TODO erase step (just for tests)
 {
-    Vector s,c,a;  
-    LeafContainer leafs = Octree::leafs;
-    TemporaryContainer nb;
-    for (LeafContainer::iterator it = leafs.begin(); it != leafs.end(); it++){
-        nb.clear();
-        (*it)->returnNeighboursLeaf(nb);
-        TemporaryContainer agentsleaf = (*it)->agents;
-        for (TemporaryContainer::iterator it2 = agentsleaf.begin(); it2 != agentsleaf.end(); it2++){
-            
-         s = (*it2)->separation(nb, rSeparation);
+  Vector s,c,a;  
+  LeafContainer leafs = Octree::leafs;
+  TemporaryContainer nb;
+  //std::cout << " leaves "<< Octree::leafs.size() << std::endl;
+  #pragma omp parallel private(s,c,a,nb) 
+  {
+    #pragma omp for
+    for (size_t i=0; i<leafs.size(); i++){
+    //for (LeafContainer::iterator it = leafs.begin(); it != leafs.end(); it++){
+      Octree *it=leafs[i];
+      nb.clear();
+      //std::cout << "a" << omp_get_thread_num() << std::endl;
+      (it)->returnNeighboursLeaf(nb);
+      //std::cout << " voisins "<< nb.size() << std::endl;
+      TemporaryContainer agentsleaf = (it)->agents;
+      #pragma omp parallel private(s,c,a)
+      {
+      #pragma omp for 
+      for(size_t j=0; j<agentsleaf.size(); j++){
+      //for (TemporaryContainer::iterator it2 = agentsleaf.begin(); it2 != agentsleaf.end(); it2++){
+      //std::cout << "b" << omp_get_thread_num() << std::endl;
+       Agent *it2=agentsleaf[j];
+       TemporaryContainer bufA,bufC,bufS;
+       returnNeighboursBuffer(nb, it2,
+        rCohesion, bufC,
+        rAlignment, bufA,
+        rSeparation, bufS);
+       s = (it2)->separation(bufS, rSeparation);
         //}
       //#pragma omp section
         //{
-          c = (*it2)->cohesion(nb, rCohesion);
+       c = (it2)->cohesion(bufC, rCohesion);
         //}
       //#pragma omp section
         //{
-          a = (*it2)->alignment(nb, rAlignment);
-          (*it2)->direction[1-Agent::curr_state] = wCohesion*c + wAlignment*a + wSeparation*s;
-      
-      (*it2)->velocity[1-Agent::curr_state] = (*it2)->velocity[Agent::curr_state] + (*it2)->direction[1-Agent::curr_state];
+       a = (it2)->alignment(bufA, rAlignment);
+       (it2)->direction[1-Agent::curr_state] = wCohesion*c + wAlignment*a + wSeparation*s;
 
-      double speed = (*it2)->velocity[1-Agent::curr_state].norm();
-      if ((speed > maxU)) {
-        (*it2)->velocity[1-Agent::curr_state] = (*it2)->velocity[1-Agent::curr_state] * maxU/speed;
+       (it2)->velocity[1-Agent::curr_state] = (it2)->velocity[Agent::curr_state] + (it2)->direction[1-Agent::curr_state];
+
+       double speed = (it2)->velocity[1-Agent::curr_state].norm();
+       if ((speed > maxU)) {
+          (it2)->velocity[1-Agent::curr_state] = (it2)->velocity[1-Agent::curr_state] * maxU/speed;
         //std::cout << " maxU/speed " << maxU/speed <<std::endl;
       }
 
-      (*it2)->position[1-Agent::curr_state] = (*it2)->position[Agent::curr_state] + dt*(*it2)->velocity[Agent::curr_state];
+      (it2)->position[1-Agent::curr_state] = (it2)->position[Agent::curr_state] + dt*(it2)->velocity[Agent::curr_state];
 
       //std::cout << " direction " << agents[k].direction[Agent::curr_state] <<std::endl;
       //std::cout << " velocity " << agents[k].velocity[Agent::curr_state] <<std::endl;
       //std::cout << " speed " << speed <<std::endl;
       //std::cout << " position " << agents[k].position[Agent::curr_state] <<std::endl;
 
-      (*it2)->position[1-Agent::curr_state].x= fmod((*it2)->position[1-Agent::curr_state].x,domainsize);
-      (*it2)->position[1-Agent::curr_state].y= fmod((*it2)->position[1-Agent::curr_state].y,domainsize);
-      (*it2)->position[1-Agent::curr_state].z= fmod((*it2)->position[1-Agent::curr_state].z,domainsize);
-
-        }
-
+      (it2)->position[1-Agent::curr_state].x= fmod((it2)->position[1-Agent::curr_state].x,domainsize);
+      (it2)->position[1-Agent::curr_state].y= fmod((it2)->position[1-Agent::curr_state].y,domainsize);
+      (it2)->position[1-Agent::curr_state].z= fmod((it2)->position[1-Agent::curr_state].z,domainsize);
 
     }
+    }
+
+
   }
+}
 
 
-   
     // Integration in time using euler method
     //TODO Remark for report : parallelism gain thx to curr_state
-    Agent::curr_state = 1 - Agent::curr_state;
+Agent::curr_state = 1 - Agent::curr_state;
     /*for(size_t k = 0; k< na; k++){
       //std::cout << "ok2 " << k << " na " << na << std::endl; 
       agents[k].velocity[Agent::curr_state] = agents[k].velocity[1-Agent::curr_state] + agents[k].direction[Agent::curr_state];
@@ -161,9 +179,25 @@ void Workspace::move(int step)//TODO erase step (just for tests)
     }*/
 
     //std::cout << "caca " << step << std::endl; 
-    update();
+      update();
     //std::cout << "caca " << step  << std::endl; 
     //std::cout << "state " << Agent::curr_state  << std::endl; 
+}
+
+void Workspace::returnNeighboursBuffer(TemporaryContainer &nb, Agent *agent,
+  Real rc, TemporaryContainer &bufC,
+  Real ra, TemporaryContainer &bufA,
+  Real rs, TemporaryContainer &bufS
+  ){
+  for(int i=0; i<nb.size(); i++){
+    Real dist =  (agent->position[Agent::curr_state] - nb[i]->position[Agent::curr_state]).norm();
+    if(dist <= rc)
+      bufC.push_back(agent);
+    if(dist <= ra)
+      bufA.push_back(agent);
+    if(dist <= rs)
+      bufS.push_back(agent);
+  }  
 }
 
 
@@ -200,7 +234,7 @@ void Workspace::simulate(int nsteps) {
       this->move(step);
       //tst.printOctree(& this->oc);
       // store every 20 steps
-      if (step%20 == 0) save(step);
+      if (step%5 == 0) save(step);
     }
 }
 

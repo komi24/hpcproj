@@ -62,7 +62,7 @@ void Octree::add(Agent &a) {
 	}
 }
 
-void Octree::returnNeighboursLeaf(TemporaryContainer neighbours){
+void Octree::returnNeighboursLeaf(TemporaryContainer &neighbours){
 Octree *lf = this;
 
 std::list<Vector> positions;
@@ -123,7 +123,7 @@ std::list<Vector> positions;
       }    
   }
 }
-void Octree::add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer neighbours){
+void Octree::add_neighbours(Octree *parent, Vector pos_leaf,TemporaryContainer &neighbours){
 
   if (parent->width > Octree::widthmin){
   
@@ -160,8 +160,13 @@ void Octree::delete_leaves(){
 		Octree *p= parent;
 		parent->child[index]=NULL;
     if (width < widthmin){
-        Octree *lf = this;
-       // leafs.erase(std::find(leafs.begin(),leafs.end(),lf));
+        //Octree *lf = this;
+        for (LeafContainer::iterator it = leafs.begin(); it != leafs.end(); it++){
+        	if((*it)==this){
+        		leafs.erase(it);
+        		break;
+        	}
+        }
       }
 		delete this;
 		p->delete_leaves();

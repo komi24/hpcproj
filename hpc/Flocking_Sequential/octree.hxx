@@ -35,8 +35,8 @@ public:
 
 
 	/* Return all the neighbours of an agent without itself */
-	void returnNeighboursLeaf(TemporaryContainer neighbours);
-	void add_neighbours( Octree *parent, Vector pos_leaf,TemporaryContainer neighbours);
+	void returnNeighboursLeaf(TemporaryContainer &neighbours);
+	void add_neighbours( Octree *parent, Vector pos_leaf,TemporaryContainer &neighbours);
 
 	/* TODO return smartly the next agent to compute 
 	to avoid re-computing too many distances */

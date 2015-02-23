@@ -44,6 +44,10 @@ public:
   to be moved */
   void update();
 
+void returnNeighboursBuffer(TemporaryContainer &nb, Agent *agent,
+  Real rc, TemporaryContainer &bufC,
+  Real ra, TemporaryContainer &bufA,
+  Real rs, TemporaryContainer &bufS);
   
   void move(int step);
   void move2(int step);
